@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Welcome!</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono&display=swap');
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background-color: #F4F2EE; font-family: 'DM Sans', sans-serif; padding: 40px 16px; -webkit-font-smoothing: antialiased; }
+    .wrapper { max-width: 520px; margin: 0 auto; }
+    .logo-row { text-align: center; margin-bottom: 28px; }
+    .logo-row span { font-size: 13px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #888780; }
+    .card { background: #FFFFFF; border-radius: 16px; overflow: hidden; border: 1px solid #E3E1DA; }
+
+    .card-header { background: #1C1C1A; padding: 40px 40px 36px; text-align: center; }
+    .icon-wrap { width: 52px; height: 52px; background: #2C2C2A; border-radius: 14px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+    .card-header h1 { font-size: 22px; font-weight: 600; color: #F4F2EE; margin-bottom: 8px; letter-spacing: -0.02em; }
+    .card-header p { font-size: 14px; color: #888780; line-height: 1.6; }
+
+    .card-body { padding: 36px 40px; }
+    .greeting { font-size: 15px; color: #444441; margin-bottom: 16px; line-height: 1.6; }
+    .message { font-size: 14px; color: #5F5E5A; line-height: 1.7; margin-bottom: 32px; }
+
+    .features { margin-bottom: 32px; }
+    .feature-item { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid #F4F2EE; }
+    .feature-item:last-child { border-bottom: none; }
+    .feature-icon { width: 32px; height: 32px; background: #F4F2EE; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+    .feature-text p { font-size: 14px; font-weight: 500; color: #2C2C2A; margin-bottom: 2px; }
+    .feature-text span { font-size: 13px; color: #888780; line-height: 1.5; }
+
+    .btn-wrapper { text-align: center; margin-bottom: 8px; }
+    .btn { display: inline-block; background: #1C1C1A; color: #F4F2EE !important; text-decoration: none; font-size: 14px; font-weight: 600; padding: 14px 36px; border-radius: 10px; letter-spacing: 0.01em; }
+
+    .divider { border: none; border-top: 1px solid #E3E1DA; margin: 28px 0; }
+
+    .help-note { background: #F4F2EE; border: 1px solid #D3D1C7; border-radius: 8px; padding: 14px 16px; font-size: 13px; color: #5F5E5A; line-height: 1.6; text-align: center; }
+    .help-note a { color: #1C1C1A; font-weight: 500; text-decoration: underline; }
+
+    .card-footer { background: #F9F8F5; border-top: 1px solid #E3E1DA; padding: 24px 40px; text-align: center; }
+    .footer-text { font-size: 12px; color: #888780; line-height: 1.7; }
+    .footer-text a { color: #5F5E5A; text-decoration: underline; }
+    .ignore-note { font-size: 12px; color: #B4B2A9; margin-top: 12px; }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+
+  <div class="logo-row"><span>YourApp</span></div>
+
+  <div class="card">
+
+    <div class="card-header">
+      <div class="icon-wrap">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12z" stroke="#F4F2EE" stroke-width="1.5"/>
+          <path d="M3.6 21.6c0-4.6 3.8-8.4 8.4-8.4s8.4 3.8 8.4 8.4" stroke="#F4F2EE" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <h1>Welcome aboard!</h1>
+      <p>Your account has been created.<br/>You're all set to get started.</p>
+    </div>
+
+    <div class="card-body">
+
+      <p class="greeting">Hi <strong>{{userName}}</strong>,</p>
+      <p class="message">
+        We're excited to have you with us. Your account is ready and you can
+        start shopping right away. Here's a quick look at what you can do.
+      </p>
+
+      <!-- Features -->
+      <div class="features">
+
+        <div class="feature-item">
+          <div class="feature-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" stroke="#444441" stroke-width="1.5" stroke-linejoin="round"/>
+              <path d="M3 6h18M16 10a4 4 0 01-8 0" stroke="#444441" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="feature-text">
+            <p>Browse & shop</p>
+            <span>Explore thousands of products with secure checkout.</span>
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <div class="feature-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M9 12l2 2 4-4" stroke="#444441" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M12 2a10 10 0 100 20A10 10 0 0012 2z" stroke="#444441" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <div class="feature-text">
+            <p>Track your orders</p>
+            <span>Real-time updates on every order you place.</span>
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <div class="feature-icon">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+              <path d="M17.657 16.657L13.414 20.9a2 2 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" stroke="#444441" stroke-width="1.5"/>
+              <path d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" stroke="#444441" stroke-width="1.5"/>
+            </svg>
+          </div>
+          <div class="feature-text">
+            <p>Manage addresses</p>
+            <span>Save multiple shipping addresses for faster checkout.</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="btn-wrapper">
+        <a href="{{loginLink}}" class="btn">Start shopping</a>
+      </div>
+
+      <hr class="divider"/>
+
+      <div class="help-note">
+        Have questions? We're here to help —
+        <a href="mailto:support@yourapp.com">support@yourapp.com</a>
+      </div>
+
+    </div>
+
+    <div class="card-footer">
+      <p class="footer-text">
+        You're receiving this because you created an account on YourApp.
+      </p>
+      <p class="ignore-note">
+        <a href="#">Privacy policy</a> &nbsp;·&nbsp; <a href="#">Unsubscribe</a>
+      </p>
+    </div>
+
+  </div>
+
+</div>
+</body>
+</html>

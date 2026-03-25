@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Shipment Update</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=DM+Mono&display=swap');
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { background-color: #F4F2EE; font-family: 'DM Sans', sans-serif; padding: 40px 16px; -webkit-font-smoothing: antialiased; }
+        .wrapper { max-width: 520px; margin: 0 auto; }
+        .logo-row { text-align: center; margin-bottom: 28px; }
+        .logo-row span { font-size: 13px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: #888780; }
+        .card { background: #FFFFFF; border-radius: 16px; overflow: hidden; border: 1px solid #E3E1DA; }
+        .card-header { background: #1C1C1A; padding: 40px 40px 36px; text-align: center; }
+        .icon-wrap { width: 52px; height: 52px; background: #2C2C2A; border-radius: 14px; display: inline-flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+        .card-header h1 { font-size: 22px; font-weight: 600; color: #F4F2EE; margin-bottom: 8px; letter-spacing: -0.02em; }
+        .card-header p { font-size: 14px; color: #888780; line-height: 1.6; }
+        .card-body { padding: 36px 40px; }
+        .greeting { font-size: 15px; color: #444441; margin-bottom: 16px; line-height: 1.6; }
+        .message { font-size: 14px; color: #5F5E5A; line-height: 1.7; margin-bottom: 28px; }
+        .order-id-row { display: flex; align-items: center; justify-content: space-between; background: #F4F2EE; border: 1px solid #D3D1C7; border-radius: 8px; padding: 12px 16px; margin-bottom: 24px; }
+        .order-id-label { font-size: 12px; color: #888780; text-transform: uppercase; letter-spacing: 0.08em; }
+        .order-id-value { font-family: 'DM Mono', monospace; font-size: 13px; color: #1C1C1A; font-weight: 600; }
+        .summary-table { width: 100%; border-collapse: collapse; margin-bottom: 24px; }
+        .summary-table td { padding: 10px 0; font-size: 14px; border-bottom: 1px solid #F4F2EE; }
+        .summary-table td:first-child { color: #888780; }
+        .summary-table td:last-child { text-align: right; color: #2C2C2A; font-weight: 500; }
+        .summary-table tr:last-child td { border-bottom: none; }
+        .status-badge { display: inline-block; border-radius: 6px; padding: 4px 10px; font-size: 12px; font-weight: 500; }
+        .status-SHIPPED   { background: #E1F5EE; border: 1px solid #9FE1CB; color: #0F6E56; }
+        .status-DELIVERED { background: #EAF3DE; border: 1px solid #C0DD97; color: #3B6D11; }
+        .status-CANCELLED { background: #FCEBEB; border: 1px solid #F7C1C1; color: #A32D2D; }
+        .status-PENDING   { background: #FAEEDA; border: 1px solid #FAC775; color: #633806; }
+        .tracking-box { background: #F4F2EE; border: 1px solid #D3D1C7; border-radius: 8px; padding: 14px 16px; margin-bottom: 24px; }
+        .tracking-box-label { font-size: 12px; color: #888780; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+        .tracking-number { font-family: 'DM Mono', monospace; font-size: 14px; color: #1C1C1A; font-weight: 600; }
+        .divider { border: none; border-top: 1px solid #E3E1DA; margin: 28px 0; }
+        .btn-wrapper { text-align: center; margin-top: 4px; }
+        .btn { display: inline-block; background: #1C1C1A; color: #F4F2EE !important; text-decoration: none; font-size: 14px; font-weight: 600; padding: 14px 36px; border-radius: 10px; letter-spacing: 0.01em; }
+        .card-footer { background: #F9F8F5; border-top: 1px solid #E3E1DA; padding: 24px 40px; text-align: center; }
+        .footer-text { font-size: 12px; color: #888780; line-height: 1.7; }
+        .footer-text a { color: #5F5E5A; text-decoration: underline; }
+        .ignore-note { font-size: 12px; color: #B4B2A9; margin-top: 12px; }
+    </style>
+</head>
+<body>
+<div class="wrapper">
+
+    <div class="logo-row"><span>YourApp</span></div>
+
+    <div class="card">
+
+        <div class="card-header">
+            <div class="icon-wrap">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M3 10h18M3 10l3-6h12l3 6M3 10v8a1 1 0 001 1h16a1 1 0 001-1v-8" stroke="#F4F2EE" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M9 14h6" stroke="#F4F2EE" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <h1>Shipment update</h1>
+            <p>There's a new update on<br/>your order shipment.</p>
+        </div>
+
+        <div class="card-body">
+
+            <p class="greeting">Hi <strong>{{userName}}</strong>,</p>
+            <p class="message">Your shipment status has been updated. Here are the latest details for your order.</p>
+
+            <div class="order-id-row">
+                <span class="order-id-label">Order ID</span>
+                <span class="order-id-value">#{{orderId}}</span>
+            </div>
+
+            <table class="summary-table">
+                <tr>
+                    <td>Status</td>
+                    <td><span class="status-badge status-{{status}}">{{status}}</span></td>
+                </tr>
+                <tr>
+                    <td>Carrier</td>
+                    <td>{{carrier}}</td>
+                </tr>
+                <tr>
+                    <td>Shipped at</td>
+                    <td>{{shippedAt}}</td>
+                </tr>
+                <tr>
+                    <td>Estimated delivery</td>
+                    <td>{{estimatedDelivery}}</td>
+                </tr>
+            </table>
+
+            <div class="tracking-box">
+                <p class="tracking-box-label">Tracking number</p>
+                <p class="tracking-number">{{trackingNumber}}</p>
+            </div>
+
+            <hr class="divider"/>
+
+            <div class="btn-wrapper">
+                <a href="{{orderLink}}" class="btn">Track my order</a>
+            </div>
+
+        </div>
+
+        <div class="card-footer">
+            <p class="footer-text">
+                Need help? <a href="mailto:support@yourapp.com">Contact support</a>
+            </p>
+            <p class="ignore-note">
+                <a href="#">Privacy policy</a> &nbsp;·&nbsp; <a href="#">Unsubscribe</a>
+            </p>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>
