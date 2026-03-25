@@ -111,6 +111,14 @@
 			<artifactId>bucket4j-core</artifactId>
 			<version>${bucket4j.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>io.github.cdimascio</groupId>
+			<artifactId>java-dotenv</artifactId>
+			<version>5.2.2</version>
+			<scope>compile</scope>
+		</dependency>
+
+
 
 		<!-- ── Lombok ── -->
 		<dependency>

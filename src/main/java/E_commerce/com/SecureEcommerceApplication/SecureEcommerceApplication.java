@@ -4,6 +4,7 @@ import com.resend.*;
 import com.resend.core.exception.ResendException;
 import com.resend.services.emails.model.CreateEmailOptions;
 import com.resend.services.emails.model.CreateEmailResponse;
+import io.github.cdimascio.dotenv.Dotenv;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeIn;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
@@ -39,26 +40,14 @@ public class SecureEcommerceApplication implements CommandLineRunner {
 
 	public static void main(String[] args) {
 		SpringApplication.run(SecureEcommerceApplication.class, args);
+		// تحميل كل متغيرات .env قبل أي bean
+		Dotenv dotenv = Dotenv.configure().filename(".env").load();
+		dotenv.entries().forEach(entry -> System.setProperty(entry.getKey(), entry.getValue()));
+
+		SpringApplication.run(SecureEcommerceApplication.class, args);
 	}
 
 	@Override
 	public void run(String... args) throws Exception {
-//		Resend resend = new Resend("re_XjFPDzq5_HzcHvyUYP6Q5tnBrLxUVk14D");
-//
-//		CreateEmailOptions params = CreateEmailOptions.builder()
-//				.from("onboarding@resend.dev")
-//				.to("omarabohashim2@gmail.com")
-//				.subject("it works!")
-//				.html("<strong>hello world</strong>")
-//				.build();
-//
-//		try {
-//			CreateEmailResponse data = resend.emails().send(params);
-//			System.out.println(data.getId());
-//		} catch (ResendException e) {
-//			e.printStackTrace();
-//		}
-		var encoder = new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
-		System.out.println(encoder.encode("omar123456"));
 	}
 	}
