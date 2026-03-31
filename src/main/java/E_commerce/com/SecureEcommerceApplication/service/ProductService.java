@@ -25,6 +25,7 @@ public interface ProductService {
     PageResponse<ProductResponse> getProductsByPriceRange(BigDecimal minPrice, BigDecimal maxPrice, int page, int size);
 
     // ── Admin ───────────────────────────────────────────────
+    PageResponse<ProductResponse> getAllAdminProducts(int page, int size, String sort);
 
     ProductDetailResponse createProduct(ProductRequest request);
 

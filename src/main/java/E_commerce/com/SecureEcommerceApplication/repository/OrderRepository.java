@@ -25,6 +25,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
         SELECT new E_commerce.com.SecureEcommerceApplication.dto.response.OrderSummaryResponse(
             o.id,
             o.status,
+            (SELECT COALESCE(SUM(oi.quantity), 0L) FROM OrderItem oi WHERE oi.order = o),
             o.totalPrice,
             CASE WHEN o.coupon IS NOT NULL THEN o.coupon.code ELSE null END,
             o.createdAt
@@ -48,6 +49,7 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
         SELECT new E_commerce.com.SecureEcommerceApplication.dto.response.OrderSummaryResponse(
             o.id,
             o.status,
+            (SELECT COALESCE(SUM(oi.quantity), 0L) FROM OrderItem oi WHERE oi.order = o),
             o.totalPrice,
             CASE WHEN o.coupon IS NOT NULL THEN o.coupon.code ELSE null END,
             o.createdAt
