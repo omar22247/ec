@@ -49,6 +49,14 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(readOnly = true)
+    public PageResponse<ProductResponse> getAllAdminProducts(int page, int size, String sort) {
+        return PageResponse.of(
+                productRepository.findAllProducts(buildPageable(page, size, sort))
+        );
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public ProductDetailResponse getProductById(Long id) {
         return findDetailOrThrow(id);
     }

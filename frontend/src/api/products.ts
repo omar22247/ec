@@ -46,6 +46,13 @@ export const filterProducts = async (
   return res.data.data
 }
 
+export const getAdminProducts = async (page = 0, size = 15, sort = 'id') => {
+  const res = await api.get<ApiResponse<PageResponse<ProductResponse>>>('/products/admin/all', {
+    params: { page, size, sort },
+  })
+  return res.data.data
+}
+
 export const createProduct = async (data: ProductRequest) => {
   const res = await api.post<ApiResponse<ProductDetailResponse>>('/products', data)
   return res.data.data

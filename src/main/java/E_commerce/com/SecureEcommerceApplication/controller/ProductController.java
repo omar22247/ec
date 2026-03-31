@@ -98,6 +98,19 @@ public class ProductController {
     //  ADMIN — Requires ADMIN role
     // ════════════════════════════════════════════════════════
 
+    @GetMapping("/admin/all")
+    @SecurityRequirement(name = "bearerAuth")
+    @Operation(summary = "Get all products (admin)", description = "Retrieves all products including inactive ones. Requires ADMIN privileges.")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ApiResponse<PageResponse<ProductResponse>>> getAllAdminProducts(
+            @RequestParam(defaultValue = "0")  int    page,
+            @RequestParam(defaultValue = "15") int    size,
+            @RequestParam(defaultValue = "id") String sort) {
+
+        PageResponse<ProductResponse> data = productService.getAllAdminProducts(page, size, sort);
+        return ResponseEntity.ok(ApiResponse.success(data));
+    }
+
     @PostMapping
     @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Create product", description = "Creates a new product in the catalog. Requires ADMIN privileges.")
