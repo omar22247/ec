@@ -158,6 +158,35 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             @Param("max") BigDecimal max,
             Pageable pageable);
 
+    // Admin — all products (active + inactive, not deleted)
+    @Query(
+            value = """
+            SELECT new E_commerce.com.SecureEcommerceApplication.dto.response.ProductResponse(
+                p.id,
+                p.name,
+                p.basePrice,
+                p.imageUrl,
+                p.active,
+                c.id,
+                c.name,
+                i.quantity,
+                (i.quantity > 0),
+                p.averageRating,
+                p.reviewCount
+            )
+            FROM Product p
+            JOIN p.category c
+            JOIN p.inventory i
+            WHERE p.deletedAt IS NULL
+            """,
+            countQuery = """
+            SELECT COUNT(p)
+            FROM Product p
+            WHERE p.deletedAt IS NULL
+            """
+    )
+    Page<ProductResponse> findAllProducts(Pageable pageable);
+
     // ════════════════════════════════════════════════════════
     //  DETAIL — ProductDetailResponse (full data)
     // ════════════════════════════════════════════════════════

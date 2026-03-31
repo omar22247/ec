@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
-import { getProducts, createProduct, updateProduct, deleteProduct, toggleProduct } from '../../api/products'
+import { getAdminProducts, createProduct, updateProduct, deleteProduct, toggleProduct } from '../../api/products'
 import { getCategories } from '../../api/categories'
 import { formatCurrency, getErrorMessage } from '../../utils/format'
 import Button from '../../components/ui/Button'
@@ -24,7 +24,7 @@ export default function AdminProducts() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['admin-products', page],
-    queryFn: () => getProducts(page, 15),
+    queryFn: () => getAdminProducts(page, 15),
     placeholderData: keepPreviousData,
   })
 

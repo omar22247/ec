@@ -24,14 +24,15 @@ public class OrderSummaryResponse {
 
     // JPQL constructor — called directly from the query
     public OrderSummaryResponse(Long id, OrderStatus status,
+                                Long totalItems,
                                 BigDecimal totalPrice,
                                 String couponCode,
                                 LocalDateTime createdAt) {
         this.id         = id;
         this.status     = status;
+        this.totalItems = totalItems != null ? totalItems.intValue() : 0;
         this.totalPrice = totalPrice;
         this.couponCode = couponCode;
         this.createdAt  = createdAt;
-        // totalItems calculated separately or set by service
     }
 }
