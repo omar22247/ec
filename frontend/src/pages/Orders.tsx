@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import { getMyOrders } from '../api/orders'
-import { formatCurrency, formatDate, statusColor } from '../utils/format'
+import { formatCurrency, formatDate } from '../utils/format'
 import Pagination from '../components/ui/Pagination'
 import { PageSpinner } from '../components/ui/Spinner'
 import Badge from '../components/ui/Badge'
@@ -19,16 +19,17 @@ const STATUS_COLOR_MAP: Record<OrderStatus, Parameters<typeof Badge>[0]['color']
 export default function Orders() {
   const [page, setPage] = useState(0)
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isFetching } = useQuery({
     queryKey: ['orders', page],
     queryFn: () => getMyOrders(page),
+    placeholderData: keepPreviousData,
   })
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <h1 className="text-2xl font-bold text-gray-900 mb-6">My Orders</h1>
 
-      {isLoading ? (
+      {isLoading && !data ? (
         <PageSpinner />
       ) : !data || data.content.length === 0 ? (
         <div className="bg-white rounded-xl border border-gray-200 p-16 text-center">
@@ -72,9 +73,9 @@ export default function Orders() {
             ))}
           </div>
 
-          <div className="mt-6">
+          <div className={`mt-6 ${isFetching ? 'opacity-60 pointer-events-none' : ''}`}>
             <Pagination
-              page={data.page}
+              page={page}
               totalPages={data.totalPages}
               onPageChange={setPage}
             />
