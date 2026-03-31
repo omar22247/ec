@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery, useMutation } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
@@ -36,11 +36,15 @@ export default function Checkout() {
   const { data: addresses } = useQuery({
     queryKey: ['addresses'],
     queryFn: getAddresses,
-    onSuccess: (data) => {
-      const def = data.find((a) => a.isDefault) ?? data[0]
+  })
+
+  // Auto-select default (or first) address once loaded
+  useEffect(() => {
+    if (addresses && selectedAddress === null) {
+      const def = addresses.find((a) => a.isDefault) ?? addresses[0]
       if (def) setSelectedAddress(def.id)
-    },
-  } as Parameters<typeof useQuery>[0])
+    }
+  }, [addresses])
 
   const validateCouponMutation = useMutation({
     mutationFn: () => validateCoupon(couponCode),
