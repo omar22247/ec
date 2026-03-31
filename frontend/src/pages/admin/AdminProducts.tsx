@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query'
 import { useForm } from 'react-hook-form'
 import { getProducts, createProduct, updateProduct, deleteProduct, toggleProduct } from '../../api/products'
 import { getCategories } from '../../api/categories'
@@ -25,6 +25,7 @@ export default function AdminProducts() {
   const { data, isLoading } = useQuery({
     queryKey: ['admin-products', page],
     queryFn: () => getProducts(page, 15),
+    placeholderData: keepPreviousData,
   })
 
   const { data: categories } = useQuery({ queryKey: ['categories'], queryFn: getCategories })
@@ -153,7 +154,7 @@ export default function AdminProducts() {
 
           {data && (
             <div className="mt-4">
-              <Pagination page={data.page} totalPages={data.totalPages} onPageChange={setPage} />
+              <Pagination page={page} totalPages={data.totalPages} onPageChange={setPage} />
             </div>
           )}
         </>

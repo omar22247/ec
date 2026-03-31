@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from '@tanstack/react-query'
 import { getAllOrders, updateOrderStatus, updateShipment } from '../../api/orders'
 import { formatCurrency, formatDate, getErrorMessage } from '../../utils/format'
 import Button from '../../components/ui/Button'
@@ -29,6 +29,7 @@ export default function AdminOrders() {
   const { data, isLoading } = useQuery({
     queryKey: ['admin-orders', page],
     queryFn: () => getAllOrders(page, 20),
+    placeholderData: keepPreviousData,
   })
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: ['admin-orders'] })
@@ -113,7 +114,7 @@ export default function AdminOrders() {
 
           {data && (
             <div className="mt-4">
-              <Pagination page={data.page} totalPages={data.totalPages} onPageChange={setPage} />
+              <Pagination page={page} totalPages={data.totalPages} onPageChange={setPage} />
             </div>
           )}
         </>

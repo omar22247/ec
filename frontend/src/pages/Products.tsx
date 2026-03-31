@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, keepPreviousData } from '@tanstack/react-query'
 import { useSearchParams } from 'react-router-dom'
 import { getProducts, searchProducts, getProductsByCategory, filterProducts } from '../api/products'
 import { getCategories } from '../api/categories'
@@ -29,9 +29,10 @@ export default function Products() {
     return getProducts(page, 12, sort)
   }
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isFetching } = useQuery({
     queryKey: ['products', page, keyword, filterMode, minPrice, maxPrice, categoryId, sort],
     queryFn,
+    placeholderData: keepPreviousData,
   })
 
   const { data: wishlistIds } = useQuery({ queryKey: ['wishlist-ids'], queryFn: async () => [] })
@@ -203,7 +204,7 @@ export default function Products() {
               {data && (
                 <div className="mt-8">
                   <Pagination
-                    page={data.page}
+                    page={page}
                     totalPages={data.totalPages}
                     onPageChange={(p) => { setPage(p); window.scrollTo(0, 0) }}
                   />
