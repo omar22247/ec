@@ -20,13 +20,15 @@ public class PasswordResetServiceImpl {
     private final PasswordResetTokenRepository tokenRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RefreshTokenService refreshTokenService;
     private final EmailService emailService;
 
     @Transactional
     public void initiateReset(String email) {
-        // ✅ Never reveal if email exists
         userRepository.findByEmail(email).ifPresent(user -> {
+
             tokenRepository.deleteByUser(user);
+            tokenRepository.flush(); // ✅ اجبر الـ DELETE يوصل الـ DB قبل الـ INSERT
 
             String rawToken = TokenHashUtil.generateRawToken();
             String hashedToken = TokenHashUtil.hash(rawToken);
@@ -56,6 +58,8 @@ public class PasswordResetServiceImpl {
         userRepository.save(user);
 
         tokenRepository.delete(resetToken); // one-time use
+        refreshTokenService.revokeAllTokensForUser(user, "refreshTokenService");
         log.info("Password reset successful for user id: {}", user.getId());
+
     }
 }

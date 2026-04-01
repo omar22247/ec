@@ -20,7 +20,7 @@ public class WishlistItemResponse {
     private boolean       inStock;
     private LocalDateTime addedAt;
 
-    // JPQL constructor — stockQuantity passed as Integer, inStock calculated here
+    // JPQL constructor — stockQuantity converted to boolean here, not in query
     public WishlistItemResponse(Long wishlistItemId, Long productId,
                                 String productName, String productImage,
                                 BigDecimal price, Integer stockQuantity,

@@ -1,5 +1,6 @@
 package E_commerce.com.SecureEcommerceApplication.security;
 
+import E_commerce.com.SecureEcommerceApplication.util.Ip;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
 
     private final RateLimiterService rateLimiterService;
     private final RateLimitEntryPoint rateLimitEntryPoint;
+    private final Ip ipService;
 
 
     @Override
@@ -25,7 +27,7 @@ public class RateLimitFilter extends OncePerRequestFilter {
                                     FilterChain chain)
             throws ServletException, IOException {
 
-        String ip  = getClientIp(request);
+        String ip  = ipService.resolveClientIp(request);
         String uri = request.getRequestURI();
 
         boolean allowed;
@@ -65,11 +67,5 @@ public class RateLimitFilter extends OncePerRequestFilter {
         chain.doFilter(request, response);
     }
 
-    private String getClientIp(HttpServletRequest request) {
-        String forwarded = request.getHeader("X-Forwarded-For");
-        if (forwarded != null && !forwarded.isBlank()) {
-            return forwarded.split(",")[0].trim(); // أول IP لو في proxy
-        }
-        return request.getRemoteAddr();
-    }
+
 }

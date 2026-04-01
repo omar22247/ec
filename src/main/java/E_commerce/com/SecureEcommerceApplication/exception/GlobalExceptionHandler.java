@@ -1,6 +1,6 @@
 package E_commerce.com.SecureEcommerceApplication.exception;
 
-import E_commerce.com.SecureEcommerceApplication.dto.response.ErrorResponse;
+import E_commerce.com.SecureEcommerceApplication.dto.response.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -13,142 +13,139 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // ── 404 Not Found ─────────────────────────────
+    // ── 404 Not Found ──────────────────────────────────────────
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleResourceNotFound(
+    public ResponseEntity<ApiResponse<Void>> handleResourceNotFound(
             ResourceNotFoundException ex, HttpServletRequest request) {
 
         log.warn("Resource not found: {}", ex.getMessage());
-
-        return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage(), request);
+        return build(HttpStatus.NOT_FOUND, ex.getMessage(), request);
     }
 
-    // ── 409 Conflict ──────────────────────────────
+    // ── 409 Conflict ───────────────────────────────────────────
     @ExceptionHandler(DuplicateResourceException.class)
-    public ResponseEntity<ErrorResponse> handleDuplicateResource(
+    public ResponseEntity<ApiResponse<Void>> handleDuplicateResource(
             DuplicateResourceException ex, HttpServletRequest request) {
 
         log.warn("Duplicate resource: {}", ex.getMessage());
-
-        return buildResponse(HttpStatus.CONFLICT, ex.getMessage(), request);
+        return build(HttpStatus.CONFLICT, ex.getMessage(), request);
     }
 
-    // ── 400 Business Error ────────────────────────
+    // ── 400 Business Error ─────────────────────────────────────
     @ExceptionHandler({BusinessException.class, OutOfStockException.class})
-    public ResponseEntity<ErrorResponse> handleBusiness(
+    public ResponseEntity<ApiResponse<Void>> handleBusiness(
             RuntimeException ex, HttpServletRequest request) {
 
         log.warn("Business error: {}", ex.getMessage());
-
-        return buildResponse(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
+        return build(HttpStatus.BAD_REQUEST, ex.getMessage(), request);
     }
 
-    // ── 401 Unauthorized ─────────────────────────
-    @ExceptionHandler({InvalidTokenException.class})
-    public ResponseEntity<ErrorResponse> handleInvalidToken(
+    // ── 401 Invalid Token ──────────────────────────────────────
+    @ExceptionHandler(InvalidTokenException.class)
+    public ResponseEntity<ApiResponse<Void>> handleInvalidToken(
             InvalidTokenException ex, HttpServletRequest request) {
 
         log.warn("Invalid token: {}", ex.getMessage());
-
-        return buildResponse(HttpStatus.UNAUTHORIZED, ex.getMessage(), request);
+        return build(HttpStatus.UNAUTHORIZED, ex.getMessage(), request);
     }
 
+    // ── 401 Bad Credentials ────────────────────────────────────
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<ErrorResponse> handleBadCredentials(
+    public ResponseEntity<ApiResponse<Void>> handleBadCredentials(
             BadCredentialsException ex, HttpServletRequest request) {
 
-        log.warn("Bad credentials at {}", request.getRequestURI());
-
-        return buildResponse(
-                HttpStatus.UNAUTHORIZED,
-                "Invalid email or password",
-                request
-        );
+        log.warn("Bad credentials at: {}", request.getRequestURI());
+        return build(HttpStatus.UNAUTHORIZED, "Invalid email or password", request);
     }
 
+    // ── 401 Disabled Account ───────────────────────────────────
     @ExceptionHandler(DisabledException.class)
-    public ResponseEntity<ErrorResponse> handleDisabled(
+    public ResponseEntity<ApiResponse<Void>> handleDisabled(
             DisabledException ex, HttpServletRequest request) {
 
-        return buildResponse(
-                HttpStatus.UNAUTHORIZED,
-                "Account is disabled",
-                request
-        );
+        log.warn("Disabled account at: {}", request.getRequestURI());
+        return build(HttpStatus.UNAUTHORIZED, "Account is disabled", request);
     }
 
-    // ── 403 Forbidden ────────────────────────────
+    // ── 403 Forbidden ──────────────────────────────────────────
     @ExceptionHandler({UnauthorizedException.class, AccessDeniedException.class})
-    public ResponseEntity<ErrorResponse> handleForbidden(
+    public ResponseEntity<ApiResponse<Void>> handleForbidden(
             RuntimeException ex, HttpServletRequest request) {
 
-        log.warn("Access denied: {}", request.getRequestURI());
-
-        return buildResponse(
+        log.warn("Access denied at: {}", request.getRequestURI());
+        return build(
                 HttpStatus.FORBIDDEN,
                 "You don't have permission to perform this action",
                 request
         );
     }
 
-    // ── 400 Validation Error ─────────────────────
+    // ── 400 Validation Error ───────────────────────────────────
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidation(
+    public ResponseEntity<ApiResponse<Void>> handleValidation(
             MethodArgumentNotValidException ex, HttpServletRequest request) {
 
-        log.warn("Validation error at {}: {}", request.getRequestURI(), ex.getMessage());
+        Map<String, String> fieldErrors = ex.getBindingResult()
+                .getFieldErrors()
+                .stream()
+                .collect(Collectors.toMap(
+                        fe -> fe.getField(),
+                        fe -> fe.getDefaultMessage(),
+                        (first, second) -> first
+                ));
 
-        return buildResponse(
-                HttpStatus.BAD_REQUEST,
-                "Validation failed",
-                request
-        );
+        log.warn("Validation error at {}: {}", request.getRequestURI(), fieldErrors);
+
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ApiResponse.error(
+                        HttpStatus.BAD_REQUEST,
+                        "Validation failed",
+                        request.getRequestURI(),
+                        fieldErrors
+                ));
     }
 
-    // ── 500 Fallback ─────────────────────────────
+    // ── 400 Malformed JSON ─────────────────────────────────────
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiResponse<Void>> handleInvalidJson(
+            HttpMessageNotReadableException ex, HttpServletRequest request) {
+
+        log.warn("Malformed JSON at {}: {}", request.getRequestURI(), ex.getMessage());
+        return build(HttpStatus.BAD_REQUEST, "Malformed JSON request", request);
+    }
+
+    // ── 500 Fallback ───────────────────────────────────────────
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponse> handleGeneric(
+    public ResponseEntity<ApiResponse<Void>> handleGeneric(
             Exception ex, HttpServletRequest request) {
 
-        log.error("Unexpected error at {}: {}", request.getRequestURI(), ex.getMessage(), ex);
-
-        return buildResponse(
+        log.error("Unexpected error at {}: {}",
+                request.getRequestURI(), ex.getMessage(), ex);
+        return build(
                 HttpStatus.INTERNAL_SERVER_ERROR,
                 "An unexpected error occurred",
                 request
         );
     }
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ErrorResponse> handleInvalidJson(
-            HttpMessageNotReadableException ex, HttpServletRequest request) {
 
-        log.warn("Invalid JSON at {}: {}", request.getRequestURI(), ex.getMessage());
-
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(ErrorResponse.builder()
-                        .status(400)
-                        .error("Bad Request")
-                        .message("Malformed JSON request")
-                        .path(request.getRequestURI())
-                        .build());
-    }
-
-    // ── Helper Method (DRY 🔥) ───────────────────
-    private ResponseEntity<ErrorResponse> buildResponse(
+    // ── DRY helper ─────────────────────────────────────────────
+    private ResponseEntity<ApiResponse<Void>> build(
             HttpStatus status, String message, HttpServletRequest request) {
 
         return ResponseEntity
                 .status(status)
-                .body(ErrorResponse.builder()
-                        .status(status.value())
-                        .error(status.getReasonPhrase())
-                        .message(message)
-                        .path(request.getRequestURI())
-                        .build());
+                .body(ApiResponse.error(
+                        status,
+                        message,
+                        request.getRequestURI()
+                ));
     }
 }

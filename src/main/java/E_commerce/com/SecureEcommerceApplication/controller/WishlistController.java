@@ -26,49 +26,70 @@ public class WishlistController {
 
     private final WishlistService wishlistService;
 
+    // ── GET wishlist ───────────────────────────────────────────
     @GetMapping
-    @Operation(summary = "Get wishlist", description = "Retrieves all products currently in the authenticated user's wishlist")
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Wishlist retrieved successfully")
+    @Operation(summary = "Get wishlist",
+            description = "Retrieves all products in the authenticated user's wishlist")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",
+            description = "Wishlist retrieved successfully")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<List<WishlistItemResponse>>> getWishlist(
             @Parameter(hidden = true) @AuthenticationPrincipal AppUserDetails userDetails) {
+
         return ResponseEntity.ok(
-                ApiResponse.success(wishlistService.getWishlist(userDetails.getUser().getId()))
+                ApiResponse.success(
+                        wishlistService.getWishlist(userId(userDetails)))
         );
     }
 
+    // ── POST add to wishlist ───────────────────────────────────
     @PostMapping("/{productId}")
-    @Operation(summary = "Add to wishlist", description = "Adds a specific product to the user's wishlist")
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "Product added to wishlist")
+    @Operation(summary = "Add to wishlist",
+            description = "Adds a specific product to the user's wishlist")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201",
+            description = "Product added to wishlist")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<WishlistItemResponse>> addToWishlist(
             @Parameter(hidden = true) @AuthenticationPrincipal AppUserDetails userDetails,
             @Parameter(description = "ID of the product to add") @PathVariable Long productId) {
+
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(ApiResponse.success("Added to wishlist",
-                        wishlistService.addToWishlist(userDetails.getUser().getId(), productId)));
+                        wishlistService.addToWishlist(userId(userDetails), productId)));
     }
 
+    // ── DELETE remove one item ─────────────────────────────────
     @DeleteMapping("/{productId}")
-    @Operation(summary = "Remove from wishlist", description = "Removes a specific product from the user's wishlist")
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Product removed from wishlist")
+    @Operation(summary = "Remove from wishlist",
+            description = "Removes a specific product from the user's wishlist")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",
+            description = "Product removed from wishlist")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<Void>> removeFromWishlist(
             @Parameter(hidden = true) @AuthenticationPrincipal AppUserDetails userDetails,
             @Parameter(description = "ID of the product to remove") @PathVariable Long productId) {
-        wishlistService.removeFromWishlist(userDetails.getUser().getId(), productId);
-        return ResponseEntity.ok(ApiResponse.success("Removed from wishlist"));
+
+        wishlistService.removeFromWishlist(userId(userDetails), productId);
+        return ResponseEntity.ok(
+                ApiResponse.success("Removed from wishlist")
+        );
     }
 
+    // ── DELETE clear all ───────────────────────────────────────
     @DeleteMapping
-    @Operation(summary = "Clear wishlist", description = "Removes all products from the user's wishlist")
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Wishlist cleared successfully")
+    @Operation(summary = "Clear wishlist",
+            description = "Removes all products from the user's wishlist")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",
+            description = "Wishlist cleared successfully")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<Void>> clearWishlist(
             @Parameter(hidden = true) @AuthenticationPrincipal AppUserDetails userDetails) {
-        wishlistService.clearWishlist(userDetails.getUser().getId());
-        return ResponseEntity.ok(ApiResponse.success("Wishlist cleared"));
+
+        wishlistService.clearWishlist(userId(userDetails));
+        return ResponseEntity.ok(
+                ApiResponse.success("Wishlist cleared")
+        );
     }
 
     private Long userId(AppUserDetails u) {

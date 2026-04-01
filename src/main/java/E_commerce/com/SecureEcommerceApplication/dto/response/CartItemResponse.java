@@ -16,17 +16,13 @@ public class CartItemResponse {
     private String     productImage;
     private BigDecimal unitPrice;
     private Integer    quantity;
-    private BigDecimal subtotal;   // calculated in constructor
-    private boolean    inStock;    // calculated in constructor
+    private BigDecimal subtotal;      // unitPrice * quantity
+    private boolean    inStock;       // stockQuantity > 0
 
     @JsonIgnore
-    private Integer stockQuantity; // raw value from DB — not sent to client
+    private Integer stockQuantity;    // raw DB value — never sent to client
 
-    // JPQL constructor — 7 raw values, NO arithmetic, NO boolean expressions
-    // Rules:
-    //   - all numeric types are wrapper (Integer, Long) not primitive
-    //   - subtotal calculated here: unitPrice * quantity
-    //   - inStock calculated here:  stockQuantity > 0
+    // JPQL constructor — arithmetic and boolean logic handled here, not in queries
     public CartItemResponse(Long id,
                             Long productId,
                             String productName,

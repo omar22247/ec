@@ -26,47 +26,59 @@ public class ReviewController {
 
     private final ReviewService reviewService;
 
+    // ── GET reviews ────────────────────────────────────────────
     @GetMapping
-    @Operation(summary = "Get product reviews", description = "Retrieves a paginated list of reviews for a specific product")
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Reviews retrieved successfully")
+    @Operation(summary = "Get product reviews",
+            description = "Retrieves a paginated list of reviews for a specific product")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",
+            description = "Reviews retrieved successfully")
     public ResponseEntity<ApiResponse<PageResponse<ReviewResponse>>> getProductReviews(
             @Parameter(description = "ID of the product") @PathVariable Long productId,
             @Parameter(description = "Page number (0-based)") @RequestParam(defaultValue = "0")  int page,
-            @Parameter(description = "Number of items per page") @RequestParam(defaultValue = "10") int size) {
+            @Parameter(description = "Items per page")        @RequestParam(defaultValue = "10") int size) {
+
         return ResponseEntity.ok(
                 ApiResponse.success(
                         reviewService.getProductReviews(productId, page, size))
         );
     }
 
+    // ── POST create ────────────────────────────────────────────
     @PostMapping
     @SecurityRequirement(name = "bearerAuth")
-    @Operation(summary = "Create a review", description = "Submits a new review for a product. Requires authentication.")
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "Review submitted successfully")
+    @Operation(summary = "Submit review",
+            description = "Submits a new review for a product. Requires authentication.")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201",
+            description = "Review submitted successfully")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<ReviewResponse>> createReview(
             @Parameter(hidden = true) @AuthenticationPrincipal AppUserDetails userDetails,
             @Parameter(description = "ID of the product to review") @PathVariable Long productId,
             @Valid @RequestBody ReviewRequest request) {
+
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(ApiResponse.success("Review submitted successfully",
-                        reviewService.createReview(
-                                userDetails.getUser().getId(), productId, request)));
+                        reviewService.createReview(userId(userDetails), productId, request)));
     }
 
-
+    // ── DELETE review ──────────────────────────────────────────
     @DeleteMapping("/{reviewId}")
     @SecurityRequirement(name = "bearerAuth")
-    @Operation(summary = "Delete a review", description = "Deletes a specific review made by the authenticated user")
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Review deleted successfully")
+    @Operation(summary = "Delete review",
+            description = "Deletes a review made by the authenticated user")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",
+            description = "Review deleted successfully")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<Void>> deleteReview(
             @Parameter(hidden = true) @AuthenticationPrincipal AppUserDetails userDetails,
-            @Parameter(description = "ID of the product") @PathVariable Long productId,
+            @Parameter(description = "ID of the product")        @PathVariable Long productId,
             @Parameter(description = "ID of the review to delete") @PathVariable Long reviewId) {
-        reviewService.deleteReview(userDetails.getUser().getId(), reviewId);
-        return ResponseEntity.ok(ApiResponse.success("Review deleted successfully"));
+
+        reviewService.deleteReview(userId(userDetails), reviewId);
+        return ResponseEntity.ok(
+                ApiResponse.success("Review deleted successfully")
+        );
     }
 
     private Long userId(AppUserDetails u) {

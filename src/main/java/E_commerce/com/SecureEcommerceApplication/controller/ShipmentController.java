@@ -24,30 +24,41 @@ public class ShipmentController {
 
     private final ShipmentService shipmentService;
 
+    // ── GET shipment (user) ────────────────────────────────────
     @GetMapping("/api/v1/orders/{orderId}/shipment")
-    @Operation(summary = "Get shipment details", description = "Retrieves the shipment tracking info for a specific order")
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Shipment details retrieved")
+    @Operation(summary = "Get shipment details",
+            description = "Retrieves shipment tracking info for a specific order")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",
+            description = "Shipment details retrieved")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<ShipmentResponse>> getShipment(
             @Parameter(hidden = true) @AuthenticationPrincipal AppUserDetails userDetails,
             @Parameter(description = "ID of the order") @PathVariable Long orderId) {
+
         return ResponseEntity.ok(
                 ApiResponse.success(
-                        shipmentService.getShipment(
-                                userDetails.getUser().getId(), orderId))
+                        shipmentService.getShipment(userId(userDetails), orderId))
         );
     }
 
+    // ── PUT update shipment (admin) ────────────────────────────
     @PutMapping("/api/v1/admin/orders/{orderId}/shipment")
-    @Operation(summary = "Update shipment", description = "Updates the shipment details/status for an order. Requires ADMIN privileges.")
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Shipment updated successfully")
+    @Operation(summary = "Update shipment",
+            description = "Updates the shipment details for an order. Requires ADMIN privileges.")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",
+            description = "Shipment updated successfully")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<ShipmentResponse>> updateShipment(
             @Parameter(description = "ID of the order") @PathVariable Long orderId,
             @Valid @RequestBody UpdateShipmentRequest request) {
+
         return ResponseEntity.ok(
                 ApiResponse.success("Shipment updated successfully",
                         shipmentService.updateShipment(orderId, request))
         );
+    }
+
+    private Long userId(AppUserDetails u) {
+        return u.getUser().getId();
     }
 }

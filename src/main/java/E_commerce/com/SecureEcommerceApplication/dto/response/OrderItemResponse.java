@@ -18,6 +18,6 @@ public class OrderItemResponse {
     private String     productName;
     private String     productImage;
     private int        quantity;
-    private BigDecimal priceAtPurchase;  // snapshot — price when order was placed
-    private BigDecimal subtotal;         // priceAtPurchase * quantity
+    private BigDecimal priceAtPurchase;   // snapshot — price when order was placed
+    private BigDecimal subtotal;          // priceAtPurchase * quantity
 }

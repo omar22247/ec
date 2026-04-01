@@ -24,4 +24,14 @@ public class TokenHashUtil {
             throw new RuntimeException(e);
         }
     }
+    public static boolean matches(String rawToken, String storedHash) {
+        String computed = hash(rawToken);
+        if (computed.length() != storedHash.length()) return false;
+
+        int result = 0;
+        for (int i = 0; i < computed.length(); i++) {
+            result |= computed.charAt(i) ^ storedHash.charAt(i);
+        }
+        return result == 0;
+    }
 }

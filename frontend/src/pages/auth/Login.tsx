@@ -27,7 +27,7 @@ export default function Login() {
     setError('')
     try {
       const auth = await loginApi(data)
-      login(auth.accessToken, auth.user)
+      login(auth.accessToken, auth.refreshToken, auth.user)
       await refresh()
       navigate(from, { replace: true })
     } catch (e) {

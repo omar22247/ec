@@ -13,14 +13,14 @@ import java.util.List;
 @AllArgsConstructor
 public class CategoryResponse {
 
-    private Long   id;
-    private String name;
-    private String slug;
-    private Long   parentId;
-    private String parentName;
+    private Long                   id;
+    private String                 name;
+    private String                 slug;
+    private Long                   parentId;
+    private String                 parentName;
     private List<CategoryResponse> subCategories;
 
-    // constructor for JPQL (sub-categories only — no subCategories list)
+    // JPQL constructor — no subCategories list, populated by service
     public CategoryResponse(Long id, String name, String slug,
                             Long parentId, String parentName) {
         this.id         = id;

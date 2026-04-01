@@ -1,10 +1,11 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react'
 import type { UserResponse } from '../types'
+import api from '../api/axios'
 
 interface AuthContextType {
   user: UserResponse | null
   token: string | null
-  login: (token: string, user: UserResponse) => void
+  login: (accessToken: string, refreshToken: string, user: UserResponse) => void
   logout: () => void
   isAuthenticated: boolean
   isAdmin: boolean
@@ -19,15 +20,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return saved ? JSON.parse(saved) : null
   })
 
-  const login = (newToken: string, newUser: UserResponse) => {
-    localStorage.setItem('accessToken', newToken)
+  const login = (accessToken: string, refreshToken: string, newUser: UserResponse) => {
+    localStorage.setItem('accessToken', accessToken)
+    localStorage.setItem('refreshToken', refreshToken)
     localStorage.setItem('user', JSON.stringify(newUser))
-    setToken(newToken)
+    setToken(accessToken)
     setUser(newUser)
   }
 
   const logout = () => {
+    const rt = localStorage.getItem('refreshToken')
+    if (rt) {
+      api.post('/auth/logout', { refreshToken: rt }).catch(() => {})
+    }
     localStorage.removeItem('accessToken')
+    localStorage.removeItem('refreshToken')
     localStorage.removeItem('user')
     setToken(null)
     setUser(null)

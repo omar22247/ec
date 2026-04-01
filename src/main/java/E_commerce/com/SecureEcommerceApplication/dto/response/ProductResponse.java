@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 
+// Used in list endpoints — lightweight, no description, no low-stock warning
 @Data
 @Builder
 @NoArgsConstructor
@@ -19,15 +20,15 @@ public class ProductResponse {
     private String     imageUrl;
     private boolean    active;
 
-    // category — name only, no need for full object
-    private Long   categoryId;
-    private String categoryName;
+    // category — name only
+    private Long       categoryId;
+    private String     categoryName;
 
-    // inventory — just availability, not the full details
-    private int     stock;
-    private boolean inStock;
+    // inventory — availability only
+    private int        stock;
+    private boolean    inStock;
 
-    // reviews — summary only (no full review list)
-    private Double averageRating;
-    private long   reviewCount;
+    // reviews — summary only
+    private Double     averageRating;
+    private long       reviewCount;
 }

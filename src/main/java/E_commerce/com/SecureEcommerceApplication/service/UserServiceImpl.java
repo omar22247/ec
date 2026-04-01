@@ -2,14 +2,18 @@ package E_commerce.com.SecureEcommerceApplication.service;
 
 import E_commerce.com.SecureEcommerceApplication.dto.request.ChangePasswordRequest;
 import E_commerce.com.SecureEcommerceApplication.dto.request.UpdateProfileRequest;
+import E_commerce.com.SecureEcommerceApplication.dto.response.AuthResponse;
 import E_commerce.com.SecureEcommerceApplication.dto.response.UserResponse;
 import E_commerce.com.SecureEcommerceApplication.entity.User;
 import E_commerce.com.SecureEcommerceApplication.exception.BusinessException;
 import E_commerce.com.SecureEcommerceApplication.exception.ResourceNotFoundException;
 import E_commerce.com.SecureEcommerceApplication.repository.UserRepository;
+import E_commerce.com.SecureEcommerceApplication.security.AppUserDetails;
+import E_commerce.com.SecureEcommerceApplication.security.JwtUtil;
 import E_commerce.com.SecureEcommerceApplication.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +27,9 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository  userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final RefreshTokenService refreshTokenService;
+    private final JwtUtil jwtUtil;
+    private final UserDetailsService userDetailsService;
 
     // ════════════════════════════════════════════════════════
     //  GET PROFILE
@@ -56,7 +63,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void changePassword(Long userId, ChangePasswordRequest request) {
+    public AuthResponse changePassword(Long userId, ChangePasswordRequest request,String clientIp ) {
 
         User user = findUserById(userId);
 
@@ -87,6 +94,21 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
 
         log.info("Password changed: userId={}", userId);
+        refreshTokenService.revokeAllTokensForUser(user, "PASSWORD_CHANGED");
+
+        // Issue a fresh token pair for the current device only
+        AppUserDetails userDetails = (AppUserDetails)
+                userDetailsService.loadUserByUsername(user.getEmail());
+
+        String token = jwtUtil.generateToken(userDetails);
+        String rawRefreshToken = refreshTokenService.createRefreshToken(userDetails.getUser(),clientIp);
+        return AuthResponse.builder()
+                .accessToken(token)
+                .refreshToken(rawRefreshToken)
+                .tokenType("Bearer")
+                .user(toResponse(user))   // ✅ real user data
+                .build();
+
     }
 
     // ════════════════════════════════════════════════════════

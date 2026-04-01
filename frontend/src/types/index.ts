@@ -43,8 +43,18 @@ export interface UserResponse {
 
 export interface AuthResponse {
   accessToken: string
+  refreshToken: string
   tokenType: string
+  accessTokenExpiresIn: number
   user: UserResponse
+}
+
+export interface RefreshTokenResponse {
+  accessToken: string
+  refreshToken: string
+  tokenType: string
+  accessTokenExpiresIn: number
+  refreshTokenExpiresIn: number
 }
 
 export interface LoginRequest {

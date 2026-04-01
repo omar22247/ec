@@ -27,10 +27,11 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             o.status,
             (SELECT COALESCE(SUM(oi.quantity), 0L) FROM OrderItem oi WHERE oi.order = o),
             o.totalPrice,
-            CASE WHEN o.coupon IS NOT NULL THEN o.coupon.code ELSE null END,
+            c.code,
             o.createdAt
         )
         FROM Order o
+        LEFT JOIN o.coupon c
         WHERE o.user.id = :userId
         AND o.deletedAt IS NULL
         ORDER BY o.createdAt DESC
@@ -51,10 +52,11 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
             o.status,
             (SELECT COALESCE(SUM(oi.quantity), 0L) FROM OrderItem oi WHERE oi.order = o),
             o.totalPrice,
-            CASE WHEN o.coupon IS NOT NULL THEN o.coupon.code ELSE null END,
+            c.code,
             o.createdAt
         )
         FROM Order o
+        LEFT JOIN o.coupon c
         WHERE o.deletedAt IS NULL
         ORDER BY o.createdAt DESC
         """,

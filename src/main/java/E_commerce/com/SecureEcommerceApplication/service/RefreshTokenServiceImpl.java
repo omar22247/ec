@@ -112,7 +112,6 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
         token.revoke(reason);
         refreshTokenRepository.save(token);
-        log.info("Refresh token revoked for user [{}], reason: {}", token.getUser().getEmail(), reason);
     }
 
     @Override

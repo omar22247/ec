@@ -6,6 +6,7 @@ import type {
   RegisterRequest,
   ForgotPasswordRequest,
   ResetPasswordRequest,
+  RefreshTokenResponse,
 } from '../types'
 
 export const login = async (data: LoginRequest) => {
@@ -25,5 +26,15 @@ export const forgotPassword = async (data: ForgotPasswordRequest) => {
 
 export const resetPassword = async (token: string, data: ResetPasswordRequest) => {
   const res = await api.post<ApiResponse<string>>(`/auth/reset-password?token=${token}`, data)
+  return res.data
+}
+
+export const refreshAccessToken = async (refreshToken: string) => {
+  const res = await api.post<ApiResponse<RefreshTokenResponse>>('/auth/refresh', { refreshToken })
+  return res.data.data
+}
+
+export const logoutApi = async (refreshToken: string) => {
+  const res = await api.post<ApiResponse<null>>('/auth/logout', { refreshToken })
   return res.data
 }

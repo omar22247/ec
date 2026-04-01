@@ -3,7 +3,8 @@ package E_commerce.com.SecureEcommerceApplication.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-// @ResponseStatus → لو مفيش GlobalExceptionHandler، Spring بيرجع 404 تلقائياً
+// when a requested resource does not exist in the DB
+// → 404 Not Found
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class ResourceNotFoundException extends RuntimeException {
 
@@ -11,7 +12,7 @@ public class ResourceNotFoundException extends RuntimeException {
         super(message);
     }
 
-    // مثلاً: new ResourceNotFoundException("Product", "id", 5)
+    // e.g. new ResourceNotFoundException("Product", "id", 5)
     // → "Product not found with id: 5"
     public ResourceNotFoundException(String resource, String field, Object value) {
         super(String.format("%s not found with %s: %s", resource, field, value));

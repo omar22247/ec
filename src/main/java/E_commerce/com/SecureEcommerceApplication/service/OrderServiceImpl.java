@@ -326,7 +326,6 @@ public class OrderServiceImpl implements OrderService {
                 .isDefault(a.isDefault())
                 .build();
     }
-
     private ShipmentResponse toShipmentResponse(Shipment s) {
         if (s == null) return null;
         return ShipmentResponse.builder()

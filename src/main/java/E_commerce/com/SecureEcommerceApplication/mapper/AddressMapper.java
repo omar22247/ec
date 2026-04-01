@@ -12,6 +12,8 @@ import org.mapstruct.*;
 public interface AddressMapper {
 
     // Address → AddressResponse
+    // "default" is the MapStruct property name derived from the boolean getter isDefault()
+    @Mapping(source = "default", target = "isDefault")
     AddressResponse toResponse(Address address);
 
     // AddressRequest → Address (create)

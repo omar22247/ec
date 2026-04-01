@@ -32,14 +32,14 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                 p.active,
                 c.id,
                 c.name,
-                i.quantity,
-                (i.quantity > 0),
+                COALESCE(i.quantity, 0),
+                (COALESCE(i.quantity, 0) > 0),
                 p.averageRating,
                 p.reviewCount
             )
             FROM Product p
             JOIN p.category c
-            JOIN p.inventory i
+            LEFT JOIN p.inventory i
             WHERE p.active = true
             AND p.deletedAt IS NULL
             """,
@@ -63,14 +63,14 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                 p.active,
                 c.id,
                 c.name,
-                i.quantity,
-                (i.quantity > 0),
+                COALESCE(i.quantity, 0),
+                (COALESCE(i.quantity, 0) > 0),
                 p.averageRating,
                 p.reviewCount
             )
             FROM Product p
             JOIN p.category c
-            JOIN p.inventory i
+            LEFT JOIN p.inventory i
             WHERE p.active = true
             AND p.deletedAt IS NULL
             AND c.id = :categoryId
@@ -98,14 +98,14 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                 p.active,
                 c.id,
                 c.name,
-                i.quantity,
-                (i.quantity > 0),
+                COALESCE(i.quantity, 0),
+                (COALESCE(i.quantity, 0) > 0),
                 p.averageRating,
                 p.reviewCount
             )
             FROM Product p
             JOIN p.category c
-            JOIN p.inventory i
+            LEFT JOIN p.inventory i
             WHERE p.active = true
             AND p.deletedAt IS NULL
             AND LOWER(p.name) LIKE LOWER(CONCAT('%', :keyword, '%'))
@@ -133,14 +133,14 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                 p.active,
                 c.id,
                 c.name,
-                i.quantity,
-                (i.quantity > 0),
+                COALESCE(i.quantity, 0),
+                (COALESCE(i.quantity, 0) > 0),
                 p.averageRating,
                 p.reviewCount
             )
             FROM Product p
             JOIN p.category c
-            JOIN p.inventory i
+            LEFT JOIN p.inventory i
             WHERE p.active = true
             AND p.deletedAt IS NULL
             AND p.basePrice BETWEEN :min AND :max
@@ -169,14 +169,14 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                 p.active,
                 c.id,
                 c.name,
-                i.quantity,
-                (i.quantity > 0),
+                COALESCE(i.quantity, 0),
+                (COALESCE(i.quantity, 0) > 0),
                 p.averageRating,
                 p.reviewCount
             )
             FROM Product p
             JOIN p.category c
-            JOIN p.inventory i
+            LEFT JOIN p.inventory i
             WHERE p.deletedAt IS NULL
             """,
             countQuery = """
@@ -202,15 +202,15 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             p.active,
             c.id,
             c.name,
-            i.quantity,
-            (i.quantity > 0),
-            (i.quantity <= i.lowStockThreshold AND i.quantity > 0),
+            COALESCE(i.quantity, 0),
+            (COALESCE(i.quantity, 0) > 0),
+            (COALESCE(i.quantity, 0) <= COALESCE(i.lowStockThreshold, 0) AND COALESCE(i.quantity, 0) > 0),
             p.averageRating,
             p.reviewCount
         )
         FROM Product p
         JOIN p.category c
-        JOIN p.inventory i
+        LEFT JOIN p.inventory i
         WHERE p.id = :id
         AND p.active = true
         AND p.deletedAt IS NULL

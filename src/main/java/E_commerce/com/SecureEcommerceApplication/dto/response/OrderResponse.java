@@ -17,25 +17,25 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderResponse {
 
-    private Long        id;
-    private OrderStatus status;
+    private Long                     id;
+    private OrderStatus              status;
 
-    // address snapshot
-    private AddressResponse address;
+    // address snapshot at time of order
+    private AddressResponse          address;
 
-    // coupon
-    private String couponCode;
+    // coupon applied (null if none)
+    private String                   couponCode;
 
     // pricing breakdown
-    private BigDecimal originalPrice;
-    private BigDecimal discountAmount;
-    private BigDecimal totalPrice;
+    private BigDecimal               originalPrice;
+    private BigDecimal               discountAmount;
+    private BigDecimal               totalPrice;
 
-    private LocalDateTime createdAt;
+    private LocalDateTime            createdAt;
 
-    // full item details
-    private List<OrderItemResponse> items;
+    // full item list
+    private List<OrderItemResponse>  items;
 
-    // shipment
-    private ShipmentResponse shipment;
+    // shipment info
+    private ShipmentResponse         shipment;
 }

@@ -14,11 +14,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class UserResponse {
 
-    private Long      id;
-    private String    name;
-    private String    email;
-    private UserRole  role;
-    private boolean   emailVerified;
+    private Long          id;
+    private String        name;
+    private String        email;
+    private UserRole      role;
+    private boolean       emailVerified;
     private LocalDateTime createdAt;
 
     // passwordHash is NEVER included here

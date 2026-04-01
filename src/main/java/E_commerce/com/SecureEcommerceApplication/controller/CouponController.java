@@ -25,28 +25,38 @@ public class CouponController {
 
     private final CouponService couponService;
 
-    // ── User — logged in only ────────────────────────────────
+    // ════════════════════════════════════════════════════════════
+    //  USER — authenticated
+    // ════════════════════════════════════════════════════════════
 
     @PostMapping("/api/v1/coupons/validate")
     @SecurityRequirement(name = "bearerAuth")
-    @Operation(summary = "Validate a coupon", description = "Called by a user to check if a coupon code is valid before applying it to an order")
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Coupon validation result retrieved")
+    @Operation(summary = "Validate coupon",
+            description = "Checks if a coupon code is valid before applying it to an order")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",
+            description = "Coupon validation result")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<ApiResponse<CouponValidationResponse>> validateCoupon(
-            @Parameter(description = "The coupon code to validate", example = "SAVE20") @RequestParam String code) {
+            @Parameter(description = "The coupon code to validate") @RequestParam String code) {
+
         return ResponseEntity.ok(
                 ApiResponse.success(couponService.validateCoupon(code))
         );
     }
 
-    // ── Admin only ───────────────────────────────────────────
+    // ════════════════════════════════════════════════════════════
+    //  ADMIN only
+    // ════════════════════════════════════════════════════════════
 
     @GetMapping("/api/v1/admin/coupons")
     @SecurityRequirement(name = "bearerAuth")
-    @Operation(summary = "Get all coupons", description = "Retrieves all coupons in the system. Requires ADMIN privileges.")
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Coupons retrieved successfully")
+    @Operation(summary = "Get all coupons",
+            description = "Retrieves all coupons in the system. Requires ADMIN privileges.")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",
+            description = "Coupons retrieved successfully")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<List<CouponResponse>>> getAllCoupons() {
+
         return ResponseEntity.ok(
                 ApiResponse.success(couponService.getAllCoupons())
         );
@@ -54,11 +64,14 @@ public class CouponController {
 
     @GetMapping("/api/v1/admin/coupons/{id}")
     @SecurityRequirement(name = "bearerAuth")
-    @Operation(summary = "Get coupon by ID", description = "Retrieves a specific coupon by its ID. Requires ADMIN privileges.")
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Coupon retrieved successfully")
+    @Operation(summary = "Get coupon by ID",
+            description = "Retrieves a specific coupon. Requires ADMIN privileges.")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",
+            description = "Coupon retrieved successfully")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<CouponResponse>> getCouponById(
             @Parameter(description = "ID of the coupon") @PathVariable Long id) {
+
         return ResponseEntity.ok(
                 ApiResponse.success(couponService.getCouponById(id))
         );
@@ -66,11 +79,14 @@ public class CouponController {
 
     @PostMapping("/api/v1/admin/coupons")
     @SecurityRequirement(name = "bearerAuth")
-    @Operation(summary = "Create a coupon", description = "Creates a new discount coupon. Requires ADMIN privileges.")
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201", description = "Coupon created successfully")
+    @Operation(summary = "Create coupon",
+            description = "Creates a new discount coupon. Requires ADMIN privileges.")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "201",
+            description = "Coupon created successfully")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<CouponResponse>> createCoupon(
             @Valid @RequestBody CouponRequest request) {
+
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(ApiResponse.success("Coupon created successfully",
@@ -79,12 +95,15 @@ public class CouponController {
 
     @PutMapping("/api/v1/admin/coupons/{id}")
     @SecurityRequirement(name = "bearerAuth")
-    @Operation(summary = "Update a coupon", description = "Updates an existing coupon. Requires ADMIN privileges.")
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Coupon updated successfully")
+    @Operation(summary = "Update coupon",
+            description = "Updates an existing coupon. Requires ADMIN privileges.")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",
+            description = "Coupon updated successfully")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<CouponResponse>> updateCoupon(
             @Parameter(description = "ID of the coupon to update") @PathVariable Long id,
             @Valid @RequestBody CouponRequest request) {
+
         return ResponseEntity.ok(
                 ApiResponse.success("Coupon updated successfully",
                         couponService.updateCoupon(id, request))
@@ -93,22 +112,30 @@ public class CouponController {
 
     @DeleteMapping("/api/v1/admin/coupons/{id}")
     @SecurityRequirement(name = "bearerAuth")
-    @Operation(summary = "Delete a coupon", description = "Permanently deletes a coupon. Requires ADMIN privileges.")
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Coupon deleted successfully")
+    @Operation(summary = "Delete coupon",
+            description = "Permanently deletes a coupon. Requires ADMIN privileges.")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",
+            description = "Coupon deleted successfully")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<Void>> deleteCoupon(
             @Parameter(description = "ID of the coupon to delete") @PathVariable Long id) {
+
         couponService.deleteCoupon(id);
-        return ResponseEntity.ok(ApiResponse.success("Coupon deleted successfully"));
+        return ResponseEntity.ok(
+                ApiResponse.success("Coupon deleted successfully")
+        );
     }
 
     @PatchMapping("/api/v1/admin/coupons/{id}/toggle")
     @SecurityRequirement(name = "bearerAuth")
-    @Operation(summary = "Toggle coupon status", description = "Activates or deactivates a coupon. Requires ADMIN privileges.")
-    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "Coupon status updated")
+    @Operation(summary = "Toggle coupon status",
+            description = "Activates or deactivates a coupon. Requires ADMIN privileges.")
+    @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200",
+            description = "Coupon status updated")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<CouponResponse>> toggleCoupon(
             @Parameter(description = "ID of the coupon to toggle") @PathVariable Long id) {
+
         return ResponseEntity.ok(
                 ApiResponse.success("Coupon status updated",
                         couponService.toggleCoupon(id))

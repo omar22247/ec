@@ -25,7 +25,7 @@ export default function Register() {
     setError('')
     try {
       const auth = await registerApi(data)
-      login(auth.accessToken, auth.user)
+      login(auth.accessToken, auth.refreshToken, auth.user)
       await refresh()
       navigate('/')
     } catch (e) {

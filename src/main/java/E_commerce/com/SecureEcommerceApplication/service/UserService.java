@@ -2,6 +2,7 @@ package E_commerce.com.SecureEcommerceApplication.service;
 
 import E_commerce.com.SecureEcommerceApplication.dto.request.ChangePasswordRequest;
 import E_commerce.com.SecureEcommerceApplication.dto.request.UpdateProfileRequest;
+import E_commerce.com.SecureEcommerceApplication.dto.response.AuthResponse;
 import E_commerce.com.SecureEcommerceApplication.dto.response.UserResponse;
 
 public interface UserService {
@@ -13,7 +14,7 @@ public interface UserService {
     UserResponse updateProfile(Long userId, UpdateProfileRequest request);
 
     // PUT /api/v1/users/me/password
-    void changePassword(Long userId, ChangePasswordRequest request);
+    AuthResponse changePassword(Long userId, ChangePasswordRequest request,String clientIp);
 
     // DELETE /api/v1/users/me
     void deleteAccount(Long userId);

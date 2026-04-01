@@ -59,7 +59,6 @@ public class ShipmentServiceImpl implements ShipmentService {
 
         shipment.setStatus(request.getStatus());
 
-        // update tracking info if provided
         if (request.getCarrier() != null) {
             shipment.setCarrier(request.getCarrier());
         }
@@ -69,25 +68,20 @@ public class ShipmentServiceImpl implements ShipmentService {
         if (request.getEstimatedDelivery() != null) {
             shipment.setEstimatedDelivery(request.getEstimatedDelivery());
         }
-
-        // auto-set shippedAt when status moves to SHIPPED
         if (request.getStatus() == ShipmentStatus.SHIPPED
                 && shipment.getShippedAt() == null) {
             shipment.setShippedAt(LocalDateTime.now());
         }
 
+        shipment = shipmentRepository.save(shipment);   // ✅ save first
 
-        ShipmentResponse response = toResponse(shipment);
-
-        // ✅ Send email after save
-//        User user = userRepository.findByEmail(Se).orElseThrow();
+        ShipmentResponse response = toResponse(shipment);   // ✅ then build response
         try {
             String userEmail = shipment.getOrder().getUser().getEmail();
             String userName  = shipment.getOrder().getUser().getName();
             log.warn(userName+ " "+userEmail);
             emailService.sendShipmentUpdateEmail(userEmail, userName, response, orderId);
         } catch (Exception e) {
-            // ✅ لو الإيميل فشل متوقفش الـ transaction
             log.warn("Shipment email failed but order updated. orderId={}, error={}", orderId, e.getMessage());
         }
 

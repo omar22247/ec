@@ -17,22 +17,8 @@ public class OrderSummaryResponse {
 
     private Long          id;
     private OrderStatus   status;
-    private int           totalItems;    // total quantity of all items
+    private Long          totalItems;   // Long matches JPQL SUM() return type
     private BigDecimal    totalPrice;
-    private String        couponCode;    // null if no coupon applied
+    private String        couponCode;   // null if no coupon applied
     private LocalDateTime createdAt;
-
-    // JPQL constructor — called directly from the query
-    public OrderSummaryResponse(Long id, OrderStatus status,
-                                Long totalItems,
-                                BigDecimal totalPrice,
-                                String couponCode,
-                                LocalDateTime createdAt) {
-        this.id         = id;
-        this.status     = status;
-        this.totalItems = totalItems != null ? totalItems.intValue() : 0;
-        this.totalPrice = totalPrice;
-        this.couponCode = couponCode;
-        this.createdAt  = createdAt;
-    }
 }

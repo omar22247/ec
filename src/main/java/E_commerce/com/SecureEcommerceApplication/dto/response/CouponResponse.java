@@ -24,5 +24,7 @@ public class CouponResponse {
     private int           usedCount;
     private LocalDateTime expiresAt;
     private boolean       active;
-    private boolean       valid;              // calculated: active + not expired + has uses
+
+    // calculated: active + not expired + has remaining uses
+    private boolean       valid;
 }

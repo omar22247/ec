@@ -35,11 +35,12 @@ public class AuthService {
     private final JwtUtil               jwtUtil;
     private final AppUserDetailsService userDetailsService;
     private final EmailService emailService;
+    private final RefreshTokenService refreshTokenService;
 
     // ── REGISTER ────────────────────────────────────────────
 
     @Transactional
-    public AuthResponse register(RegisterRequest request) {
+    public AuthResponse register(RegisterRequest request, String clientIp) {
 
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new DuplicateResourceException("User", "email", request.getEmail());
@@ -64,15 +65,17 @@ public class AuthService {
             log.warn("Register email failed but user created. email={}, error={}",
                     user.getEmail(), e.getMessage());
         }
+        String rawRefreshToken = refreshTokenService.createRefreshToken(userDetails.getUser(),clientIp);
         return AuthResponse.builder()
                 .accessToken(token)
+                .refreshToken(rawRefreshToken)
                 .user(toUserResponse(user))
                 .build();
     }
 
     // ── LOGIN ───────────────────────────────────────────────
 
-    public AuthResponse login(LoginRequest request) {
+    public AuthResponse login(LoginRequest request, String clientIp) {
 
         // validates email + password — throws BadCredentialsException if wrong
         authenticationManager.authenticate(
@@ -87,9 +90,10 @@ public class AuthService {
                 userDetailsService.loadUserByUsername(request.getEmail());
 
         String token = jwtUtil.generateToken(userDetails);
-
+        String rawRefreshToken = refreshTokenService.createRefreshToken(userDetails.getUser(),clientIp);
         return AuthResponse.builder()
                 .accessToken(token)
+                .refreshToken(rawRefreshToken)
                 .user(toUserResponse(userDetails.getUser()))
                 .build();
     }

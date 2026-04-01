@@ -1,5 +1,6 @@
 package E_commerce.com.SecureEcommerceApplication.dto.request;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
@@ -30,6 +31,6 @@ public class AddressRequest {
     @Size(max = 20)
     private String zipCode;
 
-    // هل ده هيكون العنوان الافتراضي؟
+    @JsonProperty("isDefault")
     private boolean isDefault = false;
 }

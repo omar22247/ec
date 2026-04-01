@@ -16,6 +16,6 @@ public class CartResponse {
 
     private Long                   id;
     private List<CartItemResponse> items;
-    private Integer                totalItems;  // sum of all quantities
-    private BigDecimal             totalPrice;  // sum of all subtotals
+    private Integer                totalItems;   // sum of all quantities
+    private BigDecimal             totalPrice;   // sum of all subtotals
 }
