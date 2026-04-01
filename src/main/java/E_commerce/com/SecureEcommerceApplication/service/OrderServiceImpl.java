@@ -155,10 +155,12 @@ public class OrderServiceImpl implements OrderService {
                 .order(order)
                 .status(ShipmentStatus.PREPARING).build());
 
-        // increment coupon usage
+        // increment coupon usage atomically — guards against concurrent orders
         if (coupon != null) {
-            coupon.setUsedCount(coupon.getUsedCount() + 1);
-            couponRepository.save(coupon);
+            int updated = couponRepository.incrementUsedCount(coupon.getId());
+            if (updated == 0) {
+                throw new BusinessException("Coupon has reached its usage limit");
+            }
         }
 
 

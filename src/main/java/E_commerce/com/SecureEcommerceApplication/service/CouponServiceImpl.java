@@ -41,8 +41,8 @@ public class CouponServiceImpl implements CouponService {
         if (!coupon.isValid()) {
             throw new BusinessException(
                     !coupon.isActive()   ? "Coupon is inactive" :
-                            !coupon.isValid()   ? "Coupon has expired" :
-                                    "Coupon has reached its usage limit"
+                     coupon.isExpired()  ? "Coupon has expired" :
+                                          "Coupon has reached its usage limit"
             );
         }
 
